@@ -330,7 +330,6 @@ $(async ()=>{
                     hero.stance = 'finished';
                     //  Once the attack is made, refresh the enemy icons to clear the events.
                     displayEnemies();
-                    displayHeroes();
                     $('#controls').html('');
                 });
                 $('#attackbutton').on('click', displayControls(hero));
@@ -344,8 +343,7 @@ $(async ()=>{
 
 
 	$('#banner').html('You have been attacked by '+monsters.length+' beasties!');
-	displayEnemies();
-	displayHeroes();
+	drawField();
 	heroStats();
 
 	// Begin the battle
