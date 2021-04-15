@@ -20,6 +20,7 @@ $(async ()=>{
     const happyIcon = "&#9786;";
     const deadIcon = "&#9760;";
     const timeout = 100000;  // Maximum frames before battle ends in a stalemate
+    
     //
     //          FUNCTIONS
     //
