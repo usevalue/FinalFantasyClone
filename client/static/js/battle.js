@@ -16,11 +16,10 @@
 $(async ()=>{
         
     // GAME CONSTANTS
-    const framedelay = 100; // How many milliseconds between frames?
+    const framedelay = 400; // How many milliseconds between frames?
     const happyIcon = "&#9786;";
     const deadIcon = "&#9760;";
-
-
+    const timeout = 100000;  // Maximum frames before battle ends in a stalemate
     //
     //          FUNCTIONS
     //
@@ -115,9 +114,9 @@ $(async ()=>{
 
 	// A frame runs at interval defined in framedelay
 
-    let countdown = 1;
-    let frames = 0;
-    let timeout = 100;
+
+    var frames = 0;
+    var countdown = 1; // Frames before battle begins
 
 	function frame() {
 		switch(battleStage) {
@@ -166,7 +165,8 @@ $(async ()=>{
 				if(party[i].initiative>=100) {
 					clockRunning=false;
 					party[i].stance='ready';
-					currentActors.push(party[i]);
+                    let reference = ['party', i]
+					currentActors.push(reference);
 				}
 			}
 		}
@@ -177,7 +177,8 @@ $(async ()=>{
 				if(monsters[i].initiative>=100) {
 					clockRunning=false;
 					monsters[i].stance='ready';
-					currentActors.push(monsters[i]);
+					let reference = ['monsters', i]
+					currentActors.push(reference);
 				}
 			}
 		}
@@ -193,18 +194,20 @@ $(async ()=>{
 
     function runAction() {
         if(currentActors.length>0) {
-            
-            let current = currentActors[currentActors.length-1];
+            let currentReference = currentActors[currentActors.length-1];
+            var current;
+            if(currentReference[0]=='party') current = party[currentReference[1]];
+            else current = monsters[currentReference[1]];
             switch(current.stance) {
                 case 'ready':
                     $('#banner').html(current.name + ' is ready!');
                     if(current.faction=="party") displayControls(current);
                     current.stance = 'active';
+                    drawField();
                     break;
                 case 'active':
                     if(current.faction=="monsters") {
                         doAttack(current, randomHero());
-                        current.stance = 'finished'
                     }
                     //  In single-player games, just wait.  In multiplayer, a timeout mechanism would be useful.
                     break;
@@ -212,6 +215,7 @@ $(async ()=>{
                     current.initiative = 0;
                     current.stance = 'waiting';
                     currentActors.pop();
+                    drawField();
                     break;
                 case 'fainted':
                     break;
@@ -221,8 +225,6 @@ $(async ()=>{
         else clockRunning = true;
 
         // Update battlefield display.
-        displayHeroes();
-        displayEnemies();
     }
 
     function checkStage() {
@@ -240,6 +242,7 @@ $(async ()=>{
         defender.hp -= attacker.attack;
         if(defender.hp<=0) $('#banner').html(attacker.name + ' slays ' + defender.name +'!');
         else $('#banner').html(attacker.name + ' attacks ' + defender.name + ' for ' + damage + ' damage.');
+        attacker.stance = 'finished';
     }
 
     function faint(fainter) {
@@ -293,6 +296,11 @@ $(async ()=>{
         }
     }
 
+    function drawField() {
+        displayHeroes();
+        displayEnemies();
+    }
+
     // Runs every frame: hero stats
 
     function heroStats() {
@@ -309,7 +317,7 @@ $(async ()=>{
         });
     }
 
-    //  Rends when required: control interface
+    //  Renders when required: control interface
 
     function displayControls(hero) {
         $('#banner').html(hero.name+' is up!');
