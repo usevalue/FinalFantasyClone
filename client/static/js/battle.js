@@ -130,12 +130,24 @@ $(async ()=>{
             case 'fighting':
                 if(clockRunning) runClock();
                 else runAction();
-                battleStage=checkStage();
+                if(frames>timeout) battleStage='stalemate';
                 break;
             case 'stalemate':
+                window.alert('Battle ends in stalemate');
+                battleState = 'end';
+                break;
+            case 'victory':
+                window.alert('You win!');
+                battleStage = 'end';
+                break;
+            case 'defeat':
+                window.alert('You lose!');
+                battleStage = 'end';
+                break;
+            case 'end':
                 clearInterval(battle);
-            default:
                 console.log('battle over');
+                break;
         }
         frames++;
 		// Update stats display every frame, the rest as needed.
@@ -173,6 +185,7 @@ $(async ()=>{
 
 		for(let i=0; i<monsters.length; i++) {
 			if(monsters[i].hp>0) {
+                monstersActive++;
 				monsters[i].initiative = monsters[i].initiative + monsters[i].speed;
 				if(monsters[i].initiative>=100) {
 					clockRunning=false;
@@ -183,6 +196,8 @@ $(async ()=>{
 			}
 		}
 
+        if(partyActive==0) battleStage = 'defeat';
+        else if (monstersActive==0) battleStage = 'victory';
         clockTicks++;
 	}
 
@@ -218,6 +233,9 @@ $(async ()=>{
                     drawField();
                     break;
                 case 'fainted':
+                    current.initiative = 0;
+                    currentActors.pop();
+                    drawField();
                     break;
             }
         }
@@ -226,12 +244,6 @@ $(async ()=>{
 
         // Update battlefield display.
     }
-
-    function checkStage() {
-        if(frames>timeout) return 'stalemate';
-        else return 'fighting';
-    }
-    await load();
     
     //
     //          3.  Combat actions
@@ -240,17 +252,13 @@ $(async ()=>{
     function doAttack(attacker, defender) {
         let damage = attacker.attack;
         defender.hp -= attacker.attack;
-        if(defender.hp<=0) $('#banner').html(attacker.name + ' slays ' + defender.name +'!');
+        if(defender.hp<=0) {
+            $('#banner').html(attacker.name + ' slays ' + defender.name +'!');
+            defender.stance = 'fainted';
+        }
         else $('#banner').html(attacker.name + ' attacks ' + defender.name + ' for ' + damage + ' damage.');
         attacker.stance = 'finished';
     }
-
-    function faint(fainter) {
-        fainter.initiative=0;
-        fainter.stance='waiting';
-    }
-
-
 
 	// Returns a random hero for AI attacks.
 	function randomHero() {
@@ -322,6 +330,8 @@ $(async ()=>{
     function displayControls(hero) {
         $('#banner').html(hero.name+' is up!');
         $('#controls').html('');  // Clear the control panel in case redrawing
+        
+        //  Attacks
         $('#controls').append("<button id='attackbutton'>Attack</button>");
         $('#attackbutton').on('click', ()=>{
             for(let i=0; i<monsters.length; i++) {
@@ -337,17 +347,16 @@ $(async ()=>{
             }
 
         })
+
+        // Healing
     }
 
 	//  BATTLE SET-UP
 
-
+    await load();
 	$('#banner').html('You have been attacked by '+monsters.length+' beasties!');
 	drawField();
 	heroStats();
-
-	// Begin the battle
-
 	var battle = setInterval(frame, framedelay)
 
 })

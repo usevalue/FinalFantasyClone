@@ -16,14 +16,27 @@ router.get('/getheroes', (req, res)=>{
     //  game, you would be building this based on what the player(s) had
     //  unlocked at that stage, based on their account information etc.
 
+    // RED TODO:
+    // 1.  Get player hero lineup
+
+
+    // BLUE TODO:
+    // 1.  Get hero from each player, compile into lineup
+
     let party = [sampleHeroes.cloud, sampleHeroes.aeris]
     res.send(party);
 });
 
 router.get('/getmonsters', (req, res)=>{
-    //  This would also have to be a more fleshed-out in a fuller game.
 
-    let party= [sampleMonsters.rabbit, sampleMonsters.fungus, sampleMonsters.rabbit]
+    // RED STUDIO TODO:
+    // 1.  Look up what level the player is on
+    // 2.  Load up the monsters for that level
+
+    // BLUE STUDIO TODO:
+    // 1.  Look up area you are exploring
+    
+    let party = [sampleMonsters.fungus, sampleMonsters.fungus]
     res.send(party);
 });
 
