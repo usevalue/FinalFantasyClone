@@ -1,0 +1,25 @@
+#banner {
+    text-align: center
+}
+
+#heroStats {
+    background-color: grey;
+    width: 100%;
+}
+#heroStats > tr {
+    background-color: white;
+}
+
+#monsters {
+    font-size: 10em;
+    text-align: center
+}
+
+#heroIcons {
+    font-size: 10em;
+    text-align: center
+}
+
+#controls {
+    text-align: center;
+}
