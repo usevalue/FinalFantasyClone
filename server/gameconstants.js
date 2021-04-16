@@ -23,7 +23,7 @@ const sampleMonsters = {
     rabbit: {
         id: 1,
         name: 'Ferocious rabbit',
-        attack: 1,
+        attack: 5,
         max_hp: 50,
         max_mp: 0,
         speed: 18,
@@ -33,7 +33,7 @@ const sampleMonsters = {
     fungus: {
         id: 2,
         name: 'Poisonous mushroom',
-        attack: 10,
+        attack: 20,
         max_hp: 40,
         max_mp: 10,
         speed: 8,

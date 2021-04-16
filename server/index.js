@@ -15,5 +15,4 @@ app.use((req, res, next)=>{console.log(req.originalUrl); next();})
 app.use(express.static(staticPath));
 app.use('/', router);
 
-
 app.listen(5000);

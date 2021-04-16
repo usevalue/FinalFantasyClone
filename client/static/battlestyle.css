@@ -5,7 +5,9 @@
 #heroStats {
     background-color: grey;
     width: 100%;
+    font-size: 2em;
 }
+
 #heroStats > tr {
     background-color: white;
 }
