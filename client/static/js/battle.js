@@ -251,14 +251,23 @@ $(async ()=>{
     //
 
     function doAttack(attacker, defender) {
-        let damage = attacker.attack;
-        defender.hp -= attacker.attack;
+        damage(defender, attacker.attack)
         if(defender.hp<=0) {
             $('#banner').html(attacker.name + ' slays ' + defender.name +'!');
             defender.stance = 'fainted';
         }
-        else $('#banner').html(attacker.name + ' attacks ' + defender.name + ' for ' + damage + ' damage.');
+        else $('#banner').html(attacker.name + ' attacks ' + defender.name + ' for ' + attacker.attack + ' damage.');
         attacker.stance = 'finished';
+    }
+
+    function damage(poorthing, damage) {
+        poorthing.hp -= damage;
+        if(poorthing.faction=="party") poorthing.limit+=Math.floor(damage/10);
+    }
+
+    function heal(luckything, healing) {
+        luckything.hp+=healing;
+        if(luckything.hp>luckything.max_hp) luckything.hp = luckything.max_hp;
     }
 
 	// Returns a random hero for AI attacks.
@@ -346,8 +355,21 @@ $(async ()=>{
                 $('#attackbutton').on('click', displayControls(hero));
                 $('#attackbutton').html('cancel attack')
             }
-
         })
+
+        // Limit break
+        if(hero.limit>=100) {
+        $('#controls').append("<button id='limitbreak'>LIMIT!!!</button>");
+        $('#limitbreak').on('click', ()=>{
+            for(let n=0; n<party.length; n++) {
+                heal(party[n], 30);
+            }
+            let currentIndex = currentActors[currentActors.length-1][1];
+            party[currentIndex].stance="finished";
+            party[currentIndex].limit=0;
+            $('#controls').html('');
+        });
+    }
 
         // Healing
     }
